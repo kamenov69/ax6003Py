@@ -293,6 +293,7 @@ class Ax6003Py(scpy.Scpy):
 
 
 if __name__ == '__main__':
+    #from calibration import oc
     ports = serial_ports_list()
     mnfact = 'Prolific Technology'
     baudrate = 9600
@@ -301,3 +302,4 @@ if __name__ == '__main__':
     print(serial_port_dev)
 
     ps = Ax6003Py(port=serial_port_dev, baudrate=baudrate)
+    #oc(ps.measure_voltage(),'equ')

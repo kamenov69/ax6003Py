@@ -2,21 +2,21 @@
 ## Python driver for a single-channel power supply unit:
 ## Manufacturer: AXIO MET
 ## Model: ax6003P
- ### Interface: 1 output, USB connection
+### Interface: 1 output, USB connection
 
-       ### Absolute maximum ratings:
-       ###    V_max = 60 V
-       ###    I_max = 3 A
+### Absolute maximum ratings:
+###    V_max = 60 V
+###    I_max = 3 A
 
-       Inherits from: Scpy
+    Inherits from: Scpy
        
-       Communication: Serial protocol using SCPI.
-       
-       
-       Implements the *FNCK command common to all SCPI devices.
+    Communication: Serial protocol using SCPI.
        
        
-       Inherits methods such as reset(), in_number(), status(), etc.
+    Implements the *FNCK command common to all SCPI devices.
+       
+       
+    Inherits methods such as reset(), in_number(), status(), etc.
        
        
    

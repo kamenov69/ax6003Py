@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Aug 12 13:55:22 2025
+
+@author: kamen
+"""
+
+
+class Calibration:
+    def __nit__(self): 
+        self.poly_dict = {
+            "equ": [1, 0],                   # Identity function y = x
+            "volts": [1.0, 0]       # Convert mV to V
+         }    
+    
+     #def __call__(self, polinim_coeficents_name):
+    def oc(self, polinim_coeficents_name):
+        def decortor(func):
+            def wraper (*args, **kwargs):
+                temp_reg  = func(*args, **kwargs)
+                return(self.polynom(temp_reg,polinim_coeficents_name))
+            return wraper
+         
+        return decortor
+                
+            
+    
+    def polynom(self, arg, name_of_coef):
+        """Applies a named polynomial function to a value.
+
+        Parameters
+        ----------
+        arg : float
+            Input value.
+        name_of_coef : str
+            Name of the polynomial in self.poly_dict.
+
+        Returns
+        -------
+        float
+            Result after applying the polynomial.
+        """
+        coef = self.poly_dict.get(name_of_coef, None)
+        if not coef:
+            raise Exception("Polynomial not found.")
+
+        result = 0
+        for i, c in enumerate(reversed(coef)):
+            result += pow(arg, i) * c
+
+        return result
+
+    def add_polynom(self, coef, polynom_name):
+        """Adds or updates a polynomial in poly_dict.
+
+        Parameters
+        ----------
+        coef : list of float
+            Coefficients in form [aN, ..., a1, a0]
+        polynom_name : str
+            Name of the polynomial.
+        """
+        self.poly_dict[polynom_name] = coef
+
+
+    def polynoms_list(self):
+        """Returns a string listing all defined polynomials.
+
+        Returns
+        -------
+        str
+            Human-readable representation of self.poly_dict.
+        """
+        return ", ".join(f"{k}: {v}" for k, v in self.poly_dict.items())
+
+
+    def polynoms_to_file(self, file_name):
+        """Saves polynomial dictionary to a file in JSON format.
+
+        Parameters
+        ----------
+        file_name : str
+            File path to write to.
+        """
+        with open(file_name, 'w', newline='') as f:
+            print(f"File is opened as {f}")
+            f.write(jsonpickle.encode(self.poly_dict, indent=4))
+            f.flush()
+
+    def polynoms_from_file(self, file_name):
+        """Loads polynomial dictionary from a file.
+
+        Parameters
+        ----------
+        file_name : str
+            File path to read from.
+        """
+        with open(file_name, 'r') as f:
+            string = f.read()
+            self.poly_dict = jsonpickle.decode(string)
+            
+    
