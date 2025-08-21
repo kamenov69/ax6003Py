@@ -13,17 +13,23 @@ class Calibrations:
             "equ": [1.0, 0.0],
             "hlv": [0.5, 0.0]
         }
-
-    def __call__(self, poly_name: str) -> Callable[[Callable[..., float]], Callable[..., float]]:
+  
+    def __call__(self, poly_name: str, value: float )->float:
+        if poly_name is not None:
+                 value = self.polynom( poly_name, value)
+                
+        return value
+     
+    def use(self, poly_name: str):
         def decorator(func: Callable[..., float]) -> Callable[..., float]:
             @wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> float:
                 raw_value = func(*args, **kwargs)
-                return self.polynom(raw_value, poly_name)
+                return self.polynom( poly_name , raw_value)
             return wrapper
         return decorator
-
-    def polynom(self, x: float, name_of_coef: str) -> float:
+        
+    def polynom(self,  name_of_coef: str, x: float) -> float:
         coef = self.poly_dict.get(name_of_coef)
         if coef is None:
             raise KeyError(f"Polynomial '{name_of_coef}' not found.")
@@ -35,7 +41,7 @@ class Calibrations:
             result = result * x + c
         return result
 
-    def add_polynom(self, coef: List[float], polynom_name: str) -> None:
+    def add_polynom(self, polynom_name: str, coef: List[float]) -> None:
         if not coef:
             raise ValueError("coef must contain at least one coefficient.")
         self.poly_dict[polynom_name] = coef
@@ -72,13 +78,14 @@ class Calibrations:
 if __name__ == '__main__':
     # Създаване или зареждане на калибрации
     calibrations = Calibrations.from_file_or_default("cal_data.json")
-
-    @calibrations('doble')
+    #calibrations.add_polynom('triple',[3,0])
+    #calibrations.polynoms_to_file("cal_data.json")
+    print("Текущи полиноми:", calibrations)
+    @calibrations.use('doble')
     def tst_func(arg: float) -> float:
         return arg
-
-    print("Текущи полиноми:", calibrations)
+    print(calibrations('doble', 3))
+    #print("Текущи полиноми:", calibrations)
     print("Резултат:", tst_func(42.0))
     
-    #calibrations.add_polynom([2,0],'doble')
-    #calibrations.polynoms_to_file("cal_data.json")
+  
